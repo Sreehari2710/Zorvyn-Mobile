@@ -3,6 +3,8 @@
   "compilerOptions": {
     "strict": true,
     "baseUrl": ".",
+    "jsx": "react-native",
+    "moduleResolution": "bundler",
     "paths": {
       "@components/*": ["components/*"],
       "@store/*": ["store/*"],
@@ -11,6 +13,8 @@
       "@models/*": ["models/*"],
       "@hooks/*": ["hooks/*"],
       "@assets/*": ["assets/*"]
-    }
+    },
+    "types": ["jest"]
   }
 }
+
