@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useTransactionStore } from '../store/transactionStore';
 import { useGoalStore } from '../store/goalStore';
-import { getSeedTransactions } from '../utils/seedData';
+
 import { getDaysRemainingInMonth, calculateBalance, calculateWeeklyTotals } from '../utils/calculations';
 import { formatCurrency, formatCurrencyCompact } from '../utils/currency';
 import { formatDisplayDate } from '../utils/date';
@@ -23,10 +23,7 @@ export default function DebugScreen() {
   const { transactions, addTransaction, getFilteredTransactions } = useTransactionStore();
   const { streak, updateStreak } = useGoalStore();
 
-  const handleSeedData = () => {
-    const seeds = getSeedTransactions();
-    seeds.forEach(t => addTransaction(t));
-  };
+
 
   const handleTestStreak = () => {
     updateStreak(new Date());
@@ -139,9 +136,7 @@ export default function DebugScreen() {
           <Text style={[theme.typography.heading2, { color: theme.colors.text }]}>
             Transactions: {transactions.length}
           </Text>
-          <Pressable onPress={handleSeedData} style={styles.button}>
-            <Text style={{ color: 'white' }}>Load Seed Data</Text>
-          </Pressable>
+
         </View>
 
         <View style={styles.section}>

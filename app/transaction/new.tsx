@@ -111,7 +111,8 @@ export default function AddTransactionScreen() {
         </View>
 
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
           style={{ flex: 1 }}
         >
           <ScrollView
@@ -226,9 +227,9 @@ export default function AddTransactionScreen() {
               />
             </View>
 
-            <View style={{ height: 16 }} />
+            <View style={{ height: 12 }} />
             <Button label="Save Transaction" onPress={handleSave} size="lg" />
-            <View style={{ height: 60 }} />
+            <View style={{ height: 20 }} />
           </ScrollView>
         </KeyboardAvoidingView>
       </BottomSheet>

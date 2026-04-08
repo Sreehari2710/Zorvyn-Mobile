@@ -130,7 +130,8 @@ export default function EditTransactionScreen() {
         </View>
 
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
           style={{ flex: 1 }}
         >
           <ScrollView
@@ -251,17 +252,17 @@ export default function EditTransactionScreen() {
               />
             </View>
 
-            <View style={{ height: 16 }} />
+            <View style={{ height: 12 }} />
             <Button label="Save Changes" onPress={handleSave} size="lg" />
             <Button
               label="Delete Record"
               onPress={handleDelete}
               variant="ghost"
-              textStyle={{ color: theme.colors.expense }}
-              style={{ marginTop: 8 }}
+              textStyle={{ color: theme.colors.expense, fontWeight: '600' }}
+              style={{ marginTop: 4 }}
               icon={<Trash2 size={16} color={theme.colors.expense} />}
             />
-            <View style={{ height: 60 }} />
+            <View style={{ height: 20 }} />
           </ScrollView>
         </KeyboardAvoidingView>
       </BottomSheet>
