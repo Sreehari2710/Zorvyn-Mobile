@@ -8,6 +8,7 @@ import {
   Keyboard,
   Platform 
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
@@ -37,29 +38,6 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   height = SCREEN_HEIGHT * 0.4
 }) => {
   const { theme } = useTheme();
-  const translateY = useSharedValue(SCREEN_HEIGHT);
-  const keyboardHeight = useSharedValue(0);
-
-  useEffect(() => {
-    const showSubscription = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
-      (e) => {
-        keyboardHeight.value = e.endCoordinates?.height || 0;
-      }
-    );
-    const hideSubscription = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
-      () => {
-        keyboardHeight.value = 0;
-      }
-    );
-
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, []);
-
   const context = useSharedValue({ y: 0 });
 
   const gesture = Gesture.Pan()
@@ -98,10 +76,13 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
     return () => backHandler.remove();
   }, [isVisible, onClose]);
 
+  const insets = useSafeAreaInsets();
+  const translateY = useSharedValue(SCREEN_HEIGHT);
+
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [
-        { translateY: translateY.value - (isVisible ? keyboardHeight.value : 0) }
+        { translateY: translateY.value }
       ],
     };
   });
@@ -125,7 +106,8 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           styles.sheet, 
           { 
             backgroundColor: theme.colors.surface, 
-            height,
+            height: height + insets.top,
+            paddingTop: insets.top,
             ...theme.elevation[3]
           }, 
           animatedStyle

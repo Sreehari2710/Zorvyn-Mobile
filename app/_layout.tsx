@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
-  KeyboardAvoidingView, Platform, Modal,
+  KeyboardAvoidingView, Platform, Modal, Image,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import storage from '../store/storage';
@@ -53,8 +53,12 @@ function OnboardingModal({ visible, onDone }: { visible: boolean; onDone: () => 
           >
             {/* Brand/Icon Section */}
             <View style={styles.brandSection}>
-              <View style={[styles.onboardingIcon, { backgroundColor: theme.colors.primary + '15' }]}>
-                <User size={38} color={theme.colors.primary} strokeWidth={2.2} />
+              <View style={[styles.onboardingIcon, { backgroundColor: '#fff' }]}>
+                <Image 
+                  source={require('../assets/logo.png')} 
+                  style={{ width: 88, height: 88, borderRadius: 44 }}
+                  resizeMode="contain"
+                />
               </View>
               <View style={[styles.brandBadge, { backgroundColor: theme.colors.primary }]}>
                 <Text style={styles.brandBadgeText}>ZORVYN</Text>
