@@ -291,23 +291,30 @@ export default function EditTransactionScreen() {
                 style={[
                   styles.catRow,
                   {
-                    backgroundColor: isActive ? config.bg : theme.colors.surface,
+                    backgroundColor: theme.colors.surface,
                     borderColor: isActive ? config.text : theme.colors.border,
-                    borderWidth: isActive ? 1.5 : 1,
+                    borderWidth: isActive ? 2 : 1,
                   },
                 ]}
               >
-                <View style={[styles.catRowIcon, { backgroundColor: isActive ? 'transparent' : config.bg }]}>
-                  <config.icon size={20} color={config.text} />
+                <View style={[styles.catRowIcon, { backgroundColor: config.bg, marginBottom: 8 }]}>
+                  <config.icon size={22} color={config.text} />
                 </View>
-                <Text style={[theme.typography.bodyMedium, { color: isActive ? config.text : theme.colors.text, flex: 1, marginLeft: 12 }]}>
+                <Text 
+                  numberOfLines={1} 
+                  style={[theme.typography.caption, { color: theme.colors.text, fontWeight: '600', textAlign: 'center' }]}
+                >
                   {cat}
                 </Text>
-                {isActive && <Check size={18} color={config.text} strokeWidth={2.5} />}
+                {isActive && (
+                  <View style={[styles.checkBadge, { backgroundColor: config.text }]}>
+                    <Check size={10} color="#fff" strokeWidth={3} />
+                  </View>
+                )}
               </Pressable>
             );
           })}
-          <View style={{ height: 60 }} />
+          <View style={{ width: '100%', height: 40 }} />
         </ScrollView>
       </BottomSheet>
     </View>
@@ -356,13 +363,35 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10, paddingVertical: 5,
     borderRadius: 8, marginLeft: 8,
   },
-  catList: { paddingHorizontal: 16, paddingTop: 4, gap: 8 },
+  catList: { 
+    paddingHorizontal: 16, 
+    paddingTop: 8,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
   catRow: {
-    flexDirection: 'row', alignItems: 'center',
-    borderRadius: 14, padding: 12,
+    width: '48.5%',
+    flexDirection: 'column', 
+    alignItems: 'center',
+    borderRadius: 20, 
+    paddingVertical: 16,
+    paddingHorizontal: 8,
+    marginBottom: 12,
+    position: 'relative',
   },
   catRowIcon: {
-    width: 40, height: 40, borderRadius: 10,
+    width: 48, height: 48, borderRadius: 14,
     alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+  },
+  checkBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
