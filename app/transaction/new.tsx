@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import {
-  View, Text, StyleSheet, Pressable, TextInput, ScrollView,
+  View, Text, StyleSheet, Pressable, TextInput,
   Dimensions, KeyboardAvoidingView, Platform, Keyboard,
 } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@theme/ThemeProvider';
 import { Calendar, X, Check } from 'lucide-react-native';
@@ -246,7 +247,7 @@ export default function AddTransactionScreen() {
             <X size={18} color={theme.colors.textSecondary} />
           </Pressable>
         </View>
-        <ScrollView contentContainerStyle={styles.catList}>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.catList}>
           {CATEGORIES.map(cat => {
             const config = getCategoryConfig(cat);
             const isActive = formData.category === cat;
