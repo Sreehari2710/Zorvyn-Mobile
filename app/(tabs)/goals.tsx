@@ -21,12 +21,15 @@ import {
 import {
   Target, Flame, ChevronDown, ChevronUp, Plus,
   Edit2, Calendar, TrendingUp, Info, Zap, Trash2, Check,
+  Bell, Home, Car, Plane, GraduationCap, Shield, Laptop, Star
 } from 'lucide-react-native';
-import Animated, { FadeInUp } from 'react-native-reanimated';
+import Animated, { FadeInUp, FadeInRight } from 'react-native-reanimated';
 import { GoalHistory } from '../../models/goal';
+import { useProfileStore } from '../../store/profileStore';
 
 export default function GoalsScreen() {
   const { theme } = useTheme();
+  const { name } = useProfileStore();
   const { transactions } = useTransactionStore();
   const {
     activeGoal, streak, goalHistory,
@@ -38,6 +41,17 @@ export default function GoalsScreen() {
   const [isGoalSheetVisible, setGoalSheetVisible] = useState(false);
   const [isHistoryExpanded, setHistoryExpanded] = useState(false);
   const [editingHistoryItem, setEditingHistoryItem] = useState<GoalHistory | null>(null);
+
+  const CATEGORY_ICONS: Record<string, any> = {
+    house: Home,
+    car: Car,
+    target: Target,
+    travel: Plane,
+    education: GraduationCap,
+    emergency: Shield,
+    tech: Laptop,
+    other: Star,
+  };
 
   useEffect(() => {
     if (activeGoal) syncGoalProgress(transactions);
@@ -88,93 +102,128 @@ export default function GoalsScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      {/* Header */}
-      <View style={[styles.header, { paddingTop: Platform.OS === 'ios' ? 60 : 40 }]}>
-        <View>
-          <Text style={[theme.typography.heading1, { color: theme.colors.text }]}>Savings Goals</Text>
-          <Text style={[theme.typography.body, { color: theme.colors.textSecondary }]}>
-            Track your monthly progress
-          </Text>
+      {/* Premium Header */}
+      <View style={[styles.header, { paddingTop: Platform.OS === 'ios' ? 60 : 50 }]}>
+        <View style={styles.headerLeft}>
+          <Image 
+            source={{ uri: 'https://api.dicebear.com/7.x/avataaars/png?seed=Felix' }} 
+            style={styles.avatar} 
+          />
+          <Text style={[theme.typography.heading1, { color: theme.colors.text, marginLeft: 12 }]}>Goals</Text>
         </View>
-        <TouchableOpacity
-          onPress={() => setGoalSheetVisible(true)}
-          style={[styles.addBtn, { backgroundColor: theme.colors.primary }]}
-        >
-          <Plus size={20} color="#fff" />
+        <TouchableOpacity style={styles.notificationBtn}>
+          <Bell size={24} color={theme.colors.primary} />
+          <View style={[styles.notificationDot, { backgroundColor: theme.colors.primary }]} />
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-        {/* ── Active Goal Card ── */}
+
+        {/* ── Primary Objective Card ── */}
         <Animated.View entering={FadeInUp.delay(80)}>
-          <View style={[styles.goalCard, { backgroundColor: theme.colors.surface, ...theme.elevation[1] }]}>
-            {activeGoal ? (
-              <>
-                {/* Card header */}
-                <View style={styles.cardHeader}>
-                  <View style={styles.goalInfo}>
-                    <View style={[styles.iconCircle, { backgroundColor: theme.colors.primary + '15' }]}>
-                      <Target size={22} color={theme.colors.primary} />
-                    </View>
-                    <View>
-                      <Text style={[theme.typography.heading3, { color: theme.colors.text }]}>Monthly Target</Text>
-                      <Text style={[theme.typography.caption, { color: theme.colors.textSecondary }]}>
-                        {new Date(activeGoal.year, activeGoal.month - 1).toLocaleString('default', { month: 'long', year: 'numeric' })}
-                      </Text>
-                    </View>
-                  </View>
-                  <View style={styles.actionRow}>
-                    <TouchableOpacity onPress={() => setGoalSheetVisible(true)} style={[styles.iconBtn, { backgroundColor: theme.colors.primary + '10' }]}>
-                      <Edit2 size={15} color={theme.colors.primary} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handleDeleteGoal} style={[styles.iconBtn, { backgroundColor: theme.colors.expense + '10', marginLeft: 8 }]}>
-                      <Trash2 size={15} color={theme.colors.expense} />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-
-                {/* Progress */}
-                <View style={styles.progressSection}>
-                  <ProgressBar progress={progress} />
-                  <View style={styles.progressLabels}>
-                    <Text style={[theme.typography.bodyMedium, { color: theme.colors.text }]}>
-                      {formatCurrency(activeGoal.currentSaved)}{' '}
-                      <Text style={[theme.typography.caption, { color: theme.colors.textSecondary }]}>saved</Text>
-                    </Text>
-                    <Text style={[theme.typography.bodyMedium, { color: theme.colors.text }]}>
-                      {formatCurrency(activeGoal.targetAmount)}{' '}
-                      <Text style={[theme.typography.caption, { color: theme.colors.textSecondary }]}>target</Text>
-                    </Text>
-                  </View>
-                </View>
-
-                {/* Streak badge */}
-                <View style={[styles.streakBadge, { backgroundColor: theme.colors.warning + '12' }]}>
-                  <Flame size={15} color={theme.colors.warning} fill={theme.colors.warning} />
-                  <Text style={[theme.typography.caption, { color: theme.colors.warning, fontWeight: '700', marginLeft: 6 }]}>
-                    {streak.currentStreak} DAY STREAK
-                  </Text>
-                  <Text style={[theme.typography.caption, { color: theme.colors.textSecondary, marginLeft: 8 }]}>
-                    · Best: {streak.longestStreak}d
-                  </Text>
-                </View>
-              </>
-            ) : (
-              <View style={styles.emptyGoal}>
-                <View style={[styles.iconCircle, { backgroundColor: theme.colors.primary + '10', width: 64, height: 64, borderRadius: 32 }]}>
-                  <Target size={32} color={theme.colors.primary} />
-                </View>
-                <Text style={[theme.typography.heading3, { color: theme.colors.text, marginTop: 16 }]}>No Active Goal</Text>
-                <Text style={[theme.typography.body, { color: theme.colors.textSecondary, textAlign: 'center', marginTop: 6, marginBottom: 20 }]}>
-                  Set a savings target for{' '}
-                  {new Date().toLocaleString('default', { month: 'long' })} to start tracking.
-                </Text>
-                <Button label="Set Monthly Goal" onPress={() => setGoalSheetVisible(true)} />
+          {activeGoal ? (
+            <View style={[styles.primaryGoalCard, { backgroundColor: '#4F6EF7' }]}>
+              {/* Decorative Background Icon */}
+              <View style={styles.bgIconWrapper}>
+                {(() => {
+                  const Icon = CATEGORY_ICONS[activeGoal.category || 'target'] || Target;
+                  return <Icon size={140} color="rgba(255,255,255,0.12)" />;
+                })()}
               </View>
-            )}
+
+              <View style={styles.objectiveHeader}>
+                <View>
+                  <Text style={styles.overlineText}>PRIMARY OBJECTIVE</Text>
+                  <Text style={styles.primaryGoalTitle}>{activeGoal.title || 'Savings Goal'}</Text>
+                </View>
+                <TouchableOpacity onPress={() => setGoalSheetVisible(true)} style={styles.whiteIconBtn}>
+                  <Edit2 size={16} color="#fff" />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.amountProgressRow}>
+                <View>
+                  <Text style={styles.mainCurrentAmount}>{formatCurrency(activeGoal.currentSaved)}</Text>
+                  <Text style={styles.subTargetAmount}>of {formatCurrency(activeGoal.targetAmount)}</Text>
+                </View>
+                <Text style={styles.percentageText}>{Math.round(progress)}%</Text>
+              </View>
+
+              <View style={styles.thickBarTrack}>
+                <View style={[styles.thickBarFill, { width: `${progress}%`, backgroundColor: '#FFD700' }]} />
+              </View>
+            </View>
+          ) : (
+            <View style={[styles.emptyGoalCard, { backgroundColor: theme.colors.surface, ...theme.elevation[1] }]}>
+              <View style={[styles.iconCircle, { backgroundColor: theme.colors.primary + '10', width: 64, height: 64, borderRadius: 32 }]}>
+                <Target size={32} color={theme.colors.primary} />
+              </View>
+              <Text style={[theme.typography.heading3, { color: theme.colors.text, marginTop: 16 }]}>No Active Goal</Text>
+              <Text style={[theme.typography.body, { color: theme.colors.textSecondary, textAlign: 'center', marginTop: 6, marginBottom: 20 }]}>
+                Set a savings target to start tracking.
+              </Text>
+              <Button label="Set Primary Objective" onPress={() => setGoalSheetVisible(true)} />
+            </View>
+          )}
+        </Animated.View>
+
+        {/* ── Savings Streak Card ── */}
+        <Animated.View entering={FadeInUp.delay(160)}>
+          <View style={[styles.centeredStreakCard, { backgroundColor: theme.colors.surface, ...theme.elevation[1] }]}>
+            <Text style={styles.streakLabelText}>SAVINGS STREAK</Text>
+            <View style={styles.streakNumberBox}>
+              <Text style={[styles.massiveStreakNumber, { color: theme.colors.primary }]}>{streak.currentStreak}</Text>
+              <Text style={[styles.streakDaysText, { color: theme.colors.textSecondary }]}>days</Text>
+            </View>
+            <View style={styles.bestStreakRow}>
+              <Flame size={16} color="#10B981" fill="#10B981" />
+              <Text style={styles.bestStreakText}>Best: {streak.longestStreak} days</Text>
+            </View>
           </View>
         </Animated.View>
+
+        {/* ── Consistency Tracker ── */}
+        <Animated.View entering={FadeInUp.delay(240)}>
+          <View style={[styles.consistencyCard, { backgroundColor: theme.colors.surface, ...theme.elevation[1] }]}>
+            <View style={styles.consistencyHeader}>
+              <Calendar size={18} color={theme.colors.primary} />
+              <Text style={[theme.typography.heading3, { color: theme.colors.text, marginLeft: 8 }]}>Consistency Tracker</Text>
+            </View>
+            <View style={styles.weekStrip}>
+              {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((day, idx) => {
+                // Determine if this day of current week is checked
+                // This is a simplified check for the last 7 days
+                const date = new Date();
+                const dayOffset = (date.getDay() + 6) % 7; // 0=Mon, ... 5=Sat, 6=Sun
+                const diff = idx - dayOffset;
+                const targetDate = new Date();
+                targetDate.setDate(date.getDate() + diff);
+                const dateStr = targetDate.toISOString().split('T')[0];
+                const isChecked = streak.streakDates.includes(dateStr);
+                const isToday = diff === 0;
+
+                return (
+                  <View key={day} style={styles.dayColumn}>
+                    <Text style={[theme.typography.overline, { color: theme.colors.textSecondary, fontSize: 8 }]}>{day}</Text>
+                    <View style={[
+                      styles.dayCircle,
+                      { 
+                        backgroundColor: isChecked ? theme.colors.primary : 'transparent',
+                        borderColor: isChecked ? theme.colors.primary : theme.colors.border,
+                        borderWidth: isChecked ? 0 : 1.5,
+                      }
+                    ]}>
+                      {isChecked && <Check size={14} color="#fff" strokeWidth={3} />}
+                    </View>
+                    {isToday && <View style={[styles.todayIndicator, { backgroundColor: theme.colors.primary }]} />}
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        </Animated.View>
+
 
         {/* ── Goal Met! ── */}
         {activeGoal && progress >= 100 && (() => {
@@ -220,21 +269,7 @@ export default function GoalsScreen() {
           </Animated.View>
         )}
 
-        {/* ── This Week Streak ── */}
-        <Animated.View entering={FadeInUp.delay(150)}>
-          <View style={styles.sectionHeader}>
-            <Text style={[theme.typography.heading3, { color: theme.colors.text }]}>This Week</Text>
-            <View style={styles.streakInfo}>
-              <Flame size={13} color={theme.colors.warning} />
-              <Text style={[theme.typography.caption, { color: theme.colors.textSecondary, marginLeft: 4 }]}>
-                Next milestone: {streak.currentStreak + 1}d
-              </Text>
-            </View>
-          </View>
-          <View style={[styles.streakCard, { backgroundColor: theme.colors.surface, ...theme.elevation[1] }]}>
-            <StreakStrip streakDates={streak.streakDates} />
-          </View>
-        </Animated.View>
+
 
         {/* ── Stats Row ── */}
         <View style={styles.statsRow}>
@@ -481,65 +516,65 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   header: {
     paddingHorizontal: 24,
-    paddingBottom: 16,
+    paddingBottom: 24,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  addBtn: {
-    width: 44, height: 44, borderRadius: 22,
+  headerLeft: { flexDirection: 'row', alignItems: 'center' },
+  avatar: { width: 44, height: 44, borderRadius: 22 },
+  notificationBtn: {
+    width: 44, height: 44, borderRadius: 12,
     alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#4F6EF7', shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25, shadowRadius: 8, elevation: 6,
+    position: 'relative',
+  },
+  notificationDot: {
+    position: 'absolute', top: 12, right: 12,
+    width: 8, height: 8, borderRadius: 4,
+    borderWidth: 2, borderColor: '#fff',
   },
   scrollContent: { paddingHorizontal: 20 },
-  goalCard: {
-    borderRadius: 20, padding: 18, marginBottom: 16,
+  primaryGoalCard: {
+    borderRadius: 32, padding: 28, marginBottom: 24,
+    overflow: 'hidden', position: 'relative',
+    height: 240, justifyContent: 'space-between',
   },
-  cardHeader: {
-    flexDirection: 'row', justifyContent: 'space-between',
-    alignItems: 'flex-start', marginBottom: 18,
+  bgIconWrapper: {
+    position: 'absolute', right: -20, bottom: -20,
+    opacity: 0.8,
   },
-  goalInfo: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  iconCircle: {
-    width: 46, height: 46, borderRadius: 23,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  actionRow: { flexDirection: 'row', alignItems: 'center' },
-  iconBtn: {
-    width: 34, height: 34, borderRadius: 10,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  progressSection: { marginBottom: 16 },
-  progressLabels: {
-    flexDirection: 'row', justifyContent: 'space-between', marginTop: 8,
-  },
-  streakBadge: {
-    flexDirection: 'row', alignItems: 'center', alignSelf: 'center',
-    paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
-  },
-  emptyGoal: { alignItems: 'center', paddingVertical: 12 },
-  celebCard: {
-    flexDirection: 'row', alignItems: 'center',
-    borderRadius: 16, padding: 14, marginBottom: 14, borderWidth: 1.5,
-  },
-  strategyCard: {
-    borderRadius: 14, padding: 14, marginBottom: 14, borderLeftWidth: 4,
-  },
-  tileHeader: { flexDirection: 'row', alignItems: 'center' },
-  sectionHeader: {
-    flexDirection: 'row', justifyContent: 'space-between',
-    alignItems: 'center', marginBottom: 10, marginTop: 4,
-  },
-  streakInfo: { flexDirection: 'row', alignItems: 'center' },
-  streakCard: { borderRadius: 16, padding: 14, marginBottom: 16 },
-  statsRow: { flexDirection: 'row', gap: 10, marginBottom: 20 },
+  objectiveHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  overlineText: { color: 'rgba(255,255,255,0.7)', fontSize: 10, fontWeight: '800', letterSpacing: 1.5 },
+  primaryGoalTitle: { color: '#fff', fontSize: 28, fontWeight: '800', marginTop: 6, lineHeight: 34 },
+  whiteIconBtn: { width: 36, height: 36, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center' },
+  amountProgressRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
+  mainCurrentAmount: { color: '#fff', fontSize: 32, fontWeight: '800' },
+  subTargetAmount: { color: 'rgba(255,255,255,0.7)', fontSize: 14, fontWeight: '600' },
+  percentageText: { color: '#FFD700', fontSize: 24, fontWeight: '800' },
+  thickBarTrack: { height: 12, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 6, width: '100%', overflow: 'hidden', marginTop: 12 },
+  thickBarFill: { height: '100%', borderRadius: 6 },
+  emptyGoalCard: { borderRadius: 32, padding: 32, marginBottom: 24, alignItems: 'center' },
+  centeredStreakCard: { borderRadius: 32, padding: 24, marginBottom: 24, alignItems: 'center' },
+  streakLabelText: { color: '#64748B', fontSize: 10, fontWeight: '800', letterSpacing: 1.5 },
+  streakNumberBox: { alignItems: 'center', marginVertical: 8 },
+  massiveStreakNumber: { fontSize: 64, fontWeight: '800' },
+  streakDaysText: { fontSize: 18, fontWeight: '600', marginTop: -10 },
+  bestStreakRow: { flexDirection: 'row', alignItems: 'center', marginTop: 12 },
+  bestStreakText: { color: '#10B981', fontSize: 14, fontWeight: '700', marginLeft: 6 },
+  consistencyCard: { borderRadius: 32, padding: 24, marginBottom: 24 },
+  consistencyHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
+  weekStrip: { flexDirection: 'row', justifyContent: 'space-between' },
+  dayColumn: { alignItems: 'center', width: '13%' },
+  dayCircle: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  todayIndicator: { width: 4, height: 4, borderRadius: 2, marginTop: 6 },
+  statsRow: { flexDirection: 'row', gap: 10, marginBottom: 24 },
   statTile: {
-    borderRadius: 14, padding: 12, justifyContent: 'space-between',
+    borderRadius: 20, padding: 16, justifyContent: 'space-between',
+    minHeight: 110,
   },
   accordionHeader: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 16,
   },
   accordionRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   countBadge: {

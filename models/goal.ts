@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 export const goalSchema = z.object({
   id: z.string(),
+  title: z.string().min(1, 'Goal title is required'),
+  category: z.enum(['house', 'car', 'target', 'travel', 'education', 'emergency', 'tech', 'other']).default('target'),
   targetAmount: z.number().positive(),
   currentSaved: z.number().default(0),
   month: z.number().min(1).max(12),
