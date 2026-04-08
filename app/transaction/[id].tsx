@@ -306,7 +306,7 @@ export default function EditTransactionScreen() {
               </Pressable>
             );
           })}
-          <View style={{ height: 40 }} />
+          <View style={{ height: 60 }} />
         </ScrollView>
       </BottomSheet>
     </View>

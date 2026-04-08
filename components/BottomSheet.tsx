@@ -106,8 +106,9 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           styles.sheet, 
           { 
             backgroundColor: theme.colors.surface, 
-            height: height + insets.top,
+            height: height + insets.top + insets.bottom,
             paddingTop: insets.top,
+            paddingBottom: insets.bottom,
             ...theme.elevation[3]
           }, 
           animatedStyle
