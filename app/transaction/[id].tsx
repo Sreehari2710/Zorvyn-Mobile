@@ -272,7 +272,7 @@ export default function EditTransactionScreen() {
       <BottomSheet
         isVisible={isCategorySheetVisible}
         onClose={() => setCategorySheetVisible(false)}
-        height={SCREEN_HEIGHT * 0.72}
+        height={SCREEN_HEIGHT * 0.92}
       >
         <View style={styles.sheetSubHeader}>
           <Text style={[theme.typography.heading2, { color: theme.colors.text }]}>Select Category</Text>
